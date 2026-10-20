@@ -1,0 +1,7 @@
+# dsh-plugin-side-chat bundle layer.
+# One row mounts the Host face (side-chat routes + read-only tool guard);
+# because the package declares `dsh.client`, the Web/Desktop client loads
+# ./client automatically.
+- insert:
+    - id: side-chat
+      name: dsh-plugin-side-chat

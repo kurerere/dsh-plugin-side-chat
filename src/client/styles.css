@@ -1,0 +1,207 @@
+/* dsh-plugin-side-chat — all selectors are prefixed with `dshsch-`. */
+
+.dshsch-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ---- empty state ---- */
+.dshsch-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: auto;
+  max-width: 340px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.dshsch-emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-fill-l2);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.dshsch-emptyIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.dshsch-emptyTitle {
+  color: var(--dsw-alias-label-primary);
+  font-size: 15px;
+  font-weight: 590;
+  line-height: 22px;
+}
+
+.dshsch-emptyBody {
+  margin: 0;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.dshsch-emptyNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0 0 6px;
+  padding: 8px 10px;
+  border-radius: var(--dsw-radius-sm);
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: left;
+}
+
+.dshsch-emptyNote svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+.dshsch-error {
+  margin: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-state-error-primary);
+  font-size: 12px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dshsch-empty .dshsch-error {
+  white-space: normal;
+}
+
+/* ---- read-only bar ---- */
+.dshsch-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 4px 8px 4px 12px;
+  border-bottom: 0.5px solid var(--dsw-alias-border-l2);
+}
+
+.dshsch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--dsw-alias-fill-l2);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  font-weight: 510;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.dshsch-meta {
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dshsch-spacer {
+  flex: 1;
+}
+
+.dshsch-conversation {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ---- composer ---- */
+.dshsch-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 var(--dsh-composer-side-clearance, 16px) 12px;
+}
+
+.dshsch-composerError {
+  padding: 4px 8px;
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-state-error-primary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.dshsch-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: var(--dsh-composer-card-max-width, 100%);
+  margin: 0 auto;
+  padding: 10px 10px 8px 14px;
+  border-radius: var(--dsw-radius-panel, 16px);
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l2);
+  background: var(--dsw-specific-input-major, var(--dsw-alias-bg-layer-1));
+  box-shadow: var(--dsw-elevation-soft);
+}
+
+.dshsch-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 24px;
+  max-height: 200px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: var(--dsh-content-font-size, 14px);
+  line-height: calc(24px + var(--dsh-content-font-delta, 0px));
+}
+
+.dshsch-input::placeholder {
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.dshsch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dshsch-footnote {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dshsch-footnote svg {
+  flex: none;
+}
