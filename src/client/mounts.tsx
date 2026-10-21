@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { Button, Tooltip } from '@deepseek-ai/dsh-client-ui-primitives'
+import { Button, Tooltip, type IconProps } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {
   InjectFace, PropsLocale, PropsRenderFactories, PropsRenderSlots, PropsRuntime,
 } from '@deepseek-ai/dsh-client-ui-slots'
@@ -57,9 +57,9 @@ export type SideChatTabProps =
   & PropsLocale<typeof NS>
   & InjectFace<SideChatTabInjected>
 
-function ChatIcon() {
+export function ChatIcon({ size = 15, className }: IconProps) {
   return (
-    <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.3"
+    <svg viewBox="0 0 16 16" width={size} height={size} className={className} fill="none" stroke="currentColor" strokeWidth="1.3"
       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M2.5 4.2A1.7 1.7 0 0 1 4.2 2.5h5.1A1.7 1.7 0 0 1 11 4.2v3.1A1.7 1.7 0 0 1 9.3 9H6.2L3.9 10.8V9h0a1.7 1.7 0 0 1-1.4-1.7Z" />
       <path d="M11 5.5h.8a1.7 1.7 0 0 1 1.7 1.7v3.1a1.7 1.7 0 0 1-1.4 1.7v1.5l-2-1.5H7.8a1.7 1.7 0 0 1-1.6-1.2" />
