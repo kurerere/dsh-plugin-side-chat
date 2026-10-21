@@ -12,7 +12,6 @@
  */
 
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
-import { IconNewChatOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { ISessions } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { ComposerChainProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
@@ -22,7 +21,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 import type {} from '@deepseek-ai/dsh-client-connection/client'
 import { isSideChatId } from '../shared.ts'
 import {
-  SideChatComposer, SideChatConversation, SideChatTab,
+  GuideArtworkSideChat, SideChatComposer, SideChatConversation, SideChatTab,
   type SideChatComposerInjected, type SideChatComposerMatch, type SideChatTabInjected,
 } from './mounts.tsx'
 import { SideChatModel } from './model.ts'
@@ -108,7 +107,7 @@ export function apply(ctx: ClientContext): void {
       id: TAB_ID,
       kind: TAB_KIND,
       title: () => t('tab.title'),
-      guide: [{ id: 'side-chat', order: 55, title: () => t('tab.title'), description: () => t('tab.guideDescription'), icon: IconNewChatOutlineRegular }],
+      guide: [{ id: 'side-chat', order: 55, title: () => t('tab.title'), description: () => t('tab.guideDescription'), icon: GuideArtworkSideChat }],
     }), 'side-chat: tab type')
 
     dock.effect(() => dock.slots.inject('sidebar.right.pane.tab', () => dock.slots.register({

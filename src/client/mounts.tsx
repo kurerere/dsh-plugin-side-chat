@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { Button, IconNewChatOutlineRegular, Tooltip } from '@deepseek-ai/dsh-client-ui-primitives'
+import { Button, IconNewChatOutlineRegular, Tooltip, type IconProps } from '@deepseek-ai/dsh-client-ui-primitives'
 import type {
   InjectFace, PropsLocale, PropsRenderFactories, PropsRenderSlots, PropsRuntime,
 } from '@deepseek-ai/dsh-client-ui-slots'
@@ -56,6 +56,19 @@ export type SideChatTabProps =
   & PropsRenderSlots<'side-chat.conversation'>
   & PropsLocale<typeof NS>
   & InjectFace<SideChatTabInjected>
+
+/** Guide artwork uses the same canvas, blue palette and stroke as dsh's browser entry. */
+export function GuideArtworkSideChat({ size = 36, className }: IconProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <path d="M24 16h2a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3v3l-4-3h-5a3 3 0 0 1-3-3v-2"
+        stroke="#539CFA" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M10 8h12a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-8l-5 4v-4a3 3 0 0 1-2-3v-9a3 3 0 0 1 3-3Z"
+        fill="#539CFA" />
+      <path d="M12 14h8m-8 4h5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 function LockIcon() {
   return (
