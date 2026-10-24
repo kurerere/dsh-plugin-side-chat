@@ -3,24 +3,26 @@
 [中文](./README.zh.md)
 
 A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) plugin for the Web/Desktop
-client: a **read-only side chat** in the right sidebar. It inherits the current conversation's
-completed turns so you can ask follow-up questions or check details without touching the main
-session.
+client: a **read-only side chat** in the right sidebar. It inherits the current conversation as
+it is now — including a turn still in progress — so you can ask follow-up questions or check
+details without touching the main session.
 
 ## How to use
 
 1. Open a conversation and open the right sidebar (`Ctrl+Shift+B`).
 2. From the sidebar's new-tab menu pick **Side chat**.
 3. Click **Start side chat** and ask away. **New** in the tab bar discards the current side
-   chat and starts again from the main session's latest completed turn.
+   chat and starts again from the main session as it is now, including a turn still in
+   progress.
 
 There is no other button: the right-sidebar tab is the only entry point.
 
 ## Behaviour
 
-- **Inherits context**: the side chat is seeded with the main session's latest completed-turn
-  prefix (the same boundary as fork). A conversation without a completed turn gives an empty
-  context.
+- **Inherits context**: the side chat is seeded with the main session up to now (the same seed
+  as fork): the latest completed-turn prefix when idle, or everything so far — the running
+  turn's open tail included, closed with fork markers — while a turn is in progress. A
+  conversation with no messages yet gives an empty context.
 - **Does not affect the main session**: nothing is written to the main session's log (no
   sub-agent catalog row, no notification), and side chats do not appear in the session list.
 - **Read-only**: only `read`, `glob`, `grep`, `read_image`, `web_search`, `web_fetch` and

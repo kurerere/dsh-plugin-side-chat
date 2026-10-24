@@ -3,9 +3,11 @@
  *
  * A side chat is a hidden, read-only branch of one main Session:
  *
- * - It is seeded with the main Session's latest completed-turn prefix (the
- *   same boundary `session.fork` uses), so the model sees the conversation so
- *   far, but nothing it does is written back to the main Session.
+ * - It is seeded with the main Session up to now — the completed-turn prefix
+ *   when idle, or everything so far with the open tail closed by forked
+ *   closers while a turn is still running (the same seed `session.fork`
+ *   builds) — so the model sees the conversation so far, but nothing it does
+ *   is written back to the main Session.
  * - It is created through `ctx.agents.create` with `origin: 'subagent'` and
  *   `parentSession` set to the main Session, but WITHOUT a live
  *   `parentAgent` and without a `subagent/catalog` entry in the parent log:

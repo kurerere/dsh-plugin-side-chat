@@ -3,9 +3,11 @@
  *
  * A side chat is a hidden, read-only branch of one main Session:
  *
- * - It is seeded with the main Session's latest completed-turn prefix (the
- *   same boundary `session.fork` uses), so the model sees the conversation so
- *   far, but nothing it does is written back to the main Session.
+ * - It is seeded with the main Session up to now — the completed-turn prefix
+ *   when idle, or everything so far with the open tail closed by forked
+ *   closers while a turn is still running (the same seed `session.fork`
+ *   builds) — so the model sees the conversation so far, but nothing it does
+ *   is written back to the main Session.
  * - It is created through `ctx.agents.create` with `origin: 'subagent'` and
  *   `parentSession` set to the main Session, but WITHOUT a live
  *   `parentAgent` and without a `subagent/catalog` entry in the parent log:
@@ -35,6 +37,7 @@ import {
   READ_ONLY_TOOLS, SIDE_CHAT_ID_PREFIX, SIDE_CHAT_PROVIDER,
   type SideChatAccepted, type SideChatCreated, type SideChatList, type SideChatSummary,
 } from './shared.ts'
+import { buildForkSeed } from './fork-seed.ts'
 
 export type * from './shared.ts'
 
@@ -86,7 +89,7 @@ function denial(exec: Readonly<ToolExecution>): string | undefined {
     + 'and what you can read, and tell the user to make changes in the main conversation instead.'
 }
 
-/** The fork boundary `session.fork` uses: the end of the latest completed turn. */
+/** The boundary `session.fork` uses on an idle log: the end of the latest completed turn. */
 function latestCompletedPrefixBoundary(events: readonly SessionEvent[]): number | undefined {
   const lastTurnEnd = events.findLast(event => event.type === 'turn/end')
   if (lastTurnEnd === undefined) return undefined
@@ -100,18 +103,17 @@ function latestCompletedPrefixBoundary(events: readonly SessionEvent[]): number 
   return boundary
 }
 
-/** Exact prefix plus the inherited marker (`buildForkSeed` for a completed boundary). */
-function buildSeed(events: readonly SessionEvent[], boundary: number): SessionEvent[] {
-  const prefix = events.slice(0, boundary + 1)
-  const last = events[boundary]
-  if (last === undefined) throw new Error(`side-chat: boundary ${boundary} is outside the source log`)
-  const marker = {
-    type: 'session/end-seed',
-    seq: boundary + 1,
-    time: last.time,
-    data: { inherited: true },
-  } as unknown as SessionEvent
-  return [...prefix, marker]
+/**
+ * Seed boundary: while a turn is still open (a `turn/start` with no later
+ * `turn/end`) the cut is the log tail, and the forked closers in the seed
+ * balance that open tail; otherwise the latest completed-turn prefix. A log
+ * with no turn yields no seed.
+ */
+function seedBoundary(events: readonly SessionEvent[]): number | undefined {
+  const lastTurnStart = events.findLastIndex(event => event.type === 'turn/start')
+  const lastTurnEnd = events.findLastIndex(event => event.type === 'turn/end')
+  if (lastTurnStart > lastTurnEnd) return events.at(-1)?.seq
+  return latestCompletedPrefixBoundary(events)
 }
 
 function userMessage(text: string, requestId: string): UserMessage {
@@ -265,15 +267,17 @@ export function apply(ctx: Context, config: Config): void {
   const create = async (parentSessionId: string): Promise<SideChatCreated> => {
     const observation = await ctx.sessionQuery.observeSession(parentSessionId as SessionId)
     let seed: SessionEvent[] | undefined
+    let inheritedEvents = 0
     let cwd: string | undefined
     try {
       if (observation.header.origin === 'subagent' || isSideChatId(observation.header.id)) {
         throw Object.assign(new Error('side chats can only branch from a main conversation'), { status: 400 })
       }
       cwd = observation.header.cwd
-      const boundary = latestCompletedPrefixBoundary(observation.events)
+      const boundary = seedBoundary(observation.events)
       if (boundary !== undefined && observation.events[boundary]?.seq === boundary) {
-        seed = buildSeed(observation.events, boundary)
+        seed = buildForkSeed(observation.events, boundary)
+        inheritedEvents = boundary + 1
       }
     } finally {
       (observation as Partial<Disposable>)[Symbol.dispose]?.()
@@ -283,7 +287,9 @@ export function apply(ctx: Context, config: Config): void {
     const options = agentOptions()
     const handle = await ctx.agents.create({
       sessionId,
-      ...(seed === undefined ? {} : { seed, inheritedEventCount: seed.length - 1 as never }),
+      // `inheritedEventCount` is the copied prefix length only: the marker
+      // and forked closers are child-owned synthetic events.
+      ...(seed === undefined ? {} : { seed, inheritedEventCount: inheritedEvents as never }),
       meta: {
         ...(cwd === undefined ? {} : { cwd }),
         parentSession: parentSessionId as SessionId,
@@ -296,7 +302,7 @@ export function apply(ctx: Context, config: Config): void {
       setup: setup(preset, true),
     })
     track(sessionId, parentSessionId, handle)
-    return { sessionId, parentSessionId, inheritedEvents: seed === undefined ? 0 : seed.length - 1 }
+    return { sessionId, parentSessionId, inheritedEvents }
   }
 
   /** Live side-chat agent, resuming the persisted log under this plugin's composition. */

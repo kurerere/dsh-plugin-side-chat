@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-side-chat",
-  "description": "DeepSeek Harness plugin: a read-only side chat in the right sidebar that inherits the current conversation's completed turns for follow-up questions without touching the main session",
+  "description": "DeepSeek Harness plugin: a read-only side chat in the right sidebar that inherits the current conversation as it is now — including a turn still in progress — for follow-up questions without touching the main session",
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",

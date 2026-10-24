@@ -16,15 +16,20 @@ Target: DeepSeek Harness 0.2.1-rc.2 (web client). Plugin id `side-chat`.
   `parentAgent`. A `subagent/descriptor` (version 3, one-shot, provider
   `side-chat`) is appended to the side chat's own log so the shipped
   subagent address / history paging works. Nothing is written to the main log.
-- **Seed**: `observeSession(main)` -> latest completed-turn boundary (same rule
-  as `session.fork`) -> exact prefix + `session/end-seed {inherited: true}`.
-  Without a completed turn the side chat starts with an empty seed.
+- **Seed**: `observeSession(main)` -> boundary (an open turn cuts at the log
+  tail; an idle log uses the latest completed-turn boundary, same rule as
+  `session.fork`) -> exact port of core `buildForkSeed`: prefix +
+  `session/end-seed {inherited: true}` + forked closers (synthetic error
+  `tool/result`s for pending calls, `step/end`, `turn/end {kind:'forked'}`)
+  when the tail turn is still open. `inheritedEventCount` is the prefix
+  length only. A log with no turn gives an empty seed.
 - **Client**: `sessions.retain(child address)` + `SessionProvider` +
   `renderFactorySlot('conversation.content', { variant: 'embedded' })` inside
   the tab; `conversation.composer` chain entry at priority -20 that only
   matches side-chat ids (before the shipped subagent read-only composer at
   -10). The composer has no permission selector.
-- **New**: creates a fresh side chat from the latest completed turn and closes
+- **New**: creates a fresh side chat from the main session as it is now —
+  including a turn still in progress, cut at the current point — and closes
   the previous live agent; the previous log stays on disk. The conversation
   remounts for the new child id and focuses its input.
 
